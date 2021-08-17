@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import Node from './Node/Node'
 import { dijkstra, getNodesInShortestPathOrder } from '../algorithms/dijkstra'
+import { BFS } from '../algorithms/breadthFirstSearch'
+import { DFS } from '../algorithms/depthFirstSearch'
 
 import './PathfindingVisualizer.css'
 
@@ -71,6 +73,38 @@ export default class PathfindingVisualizer extends Component<Props, State> {
             }, 10 * i)
         }
     }
+    animateBFS(visitedNodesInOrder: any, nodesInShortestPathOrder: any) {
+        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+            if (i === visitedNodesInOrder.length) {
+                setTimeout(() => {
+                    this.animateShortestPath(nodesInShortestPathOrder)
+                }, 10 * i)
+                return
+            }
+            setTimeout(() => {
+                const node = visitedNodesInOrder[i]
+                document
+                    .getElementById(`node-${node.row}-${node.col}`)
+                    ?.classList.add('node-visited')
+            }, 10 * i)
+        }
+    }
+    animateDFS(visitedNodesInOrder: any, nodesInShortestPathOrder: any) {
+        for (let i = 0; i <= visitedNodesInOrder.length; i++) {
+            if (i === visitedNodesInOrder.length) {
+                setTimeout(() => {
+                    this.animateShortestPath(nodesInShortestPathOrder)
+                }, 10 * i)
+                return
+            }
+            setTimeout(() => {
+                const node = visitedNodesInOrder[i]
+                document
+                    .getElementById(`node-${node.row}-${node.col}`)
+                    ?.classList.add('node-visited')
+            }, 10 * i)
+        }
+    }
 
     animateShortestPath(nodesInShortestPathOrder: any) {
         for (let i = 0; i < nodesInShortestPathOrder.length; i++) {
@@ -92,12 +126,44 @@ export default class PathfindingVisualizer extends Component<Props, State> {
         this.animateDijkstra(visitedNodesInOrder, nodesInShortestPathOrder)
     }
 
+    visualizeBFS() {
+        const { grid } = this.state
+        const startNode = grid[START_NODE_ROW][START_NODE_COL]
+        const endNode = grid[END_NODE_ROW][END_NODE_COL]
+        const visitedNodesInOrder = BFS(grid, startNode, endNode)
+        const nodesInShortestPathOrder = getNodesInShortestPathOrder(endNode)
+        this.animateBFS(visitedNodesInOrder, nodesInShortestPathOrder)
+    }
+
+    visualizeDFS() {
+        const { grid } = this.state
+        const startNode = grid[START_NODE_ROW][START_NODE_COL]
+        const endNode = grid[END_NODE_ROW][END_NODE_COL]
+        const visitedNodesInOrder = DFS(grid, startNode, endNode)
+        const nodesInShortestPathOrder = getNodesInShortestPathOrder(endNode)
+        this.animateDFS(visitedNodesInOrder, nodesInShortestPathOrder)
+    }
+
     render() {
         const { grid, mouseIsPressed } = this.state
         return (
             <>
+                <button onClick={() => this.visualizeBFS()}>
+                    Visualize BFS Algorithm
+                </button>
                 <button onClick={() => this.visualizeDijkstra()}>
                     Visualize Dijkstra's Algorithm
+                </button>
+                <button onClick={() => this.visualizeDFS()}>
+                    Visualize DFS Algorithm
+                </button>
+                <button
+                    onClick={() => {
+                        const grid = getInitialGrid()
+                        this.setState({ grid: grid })
+                    }}
+                >
+                    Clear Board
                 </button>
                 <div className='grid'>
                     {grid.map((row, rowIndex) => (
@@ -133,6 +199,8 @@ export default class PathfindingVisualizer extends Component<Props, State> {
         )
     }
 }
+
+const resetGrid = (grid: Array<Array<Nodes>>, row: number, col: number) => {}
 
 const getInitialGrid = () => {
     const grid = []

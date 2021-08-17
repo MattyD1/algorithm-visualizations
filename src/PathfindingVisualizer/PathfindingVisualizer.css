@@ -1,5 +1,6 @@
 .grid {
-    margin: 100px 0 0;
+    width: 90%;
+    margin: 100px auto;
 }
 
 .row {
